@@ -21,8 +21,8 @@ import sys
 import getopt
 
 def usage():
-    print("uniquify [--help|-h]")
-    print("uniquify --input=<filename> --output=<output-filename> [—verbose]")
+    print('uniquify [--help|-h]')
+    print('uniquify --input=<filename> --output=<output-filename> [—verbose]')
 
 def main():
 
@@ -47,28 +47,28 @@ def main():
 
     for o, a in opts:
         # TODO: -verbose vs --verbose?
-        if o == "--verbose":
+        if o == '--verbose':
             verbose = True
             do_verbose('Turn on verbose.')
-        elif o in ("-h", "--help"):
+        elif o in ('-h', '--help'):
             usage()
             sys.exit()
-        elif o == "--input":
+        elif o == '--input':
             input = a 
             do_verbose('Input ' + a)
-        elif o == "--output":
+        elif o == '--output':
             output = a 
             do_verbose('Output ' + a)
         else:
-            assert False, "unhandled option"
+            assert False, 'unhandled option'
 
     if len(args) > 0:
-        print("Unwanted args", args)
+        print('Unwanted args', args)
         usage()
         sys.exit(2)
 
     if input is None:
-        print("Missing --input")
+        print('Missing --input')
         usage()
         sys.exit(2)
 
@@ -83,7 +83,7 @@ def main():
                     print(line, end='')
                     seen[line] = 1
     except OSError as err:
-        print("OS error: {0}".format(err))        
+        print('OS error: {0}'.format(err))        
 
 # I think the above code is clearer (wrapping try around with), instead
 # of the code below (make try very very specific around only open).
@@ -91,7 +91,7 @@ def main():
 #    try:
 #        f = open(input);
 #    except OSError as err:
-#        print("OS error: {0}".format(err))        
+#        print('OS error: {0}'.format(err))        
 #    else:
 #        for line in f:
 #            # if line not read already, print line and mark as seen
@@ -100,5 +100,5 @@ def main():
 #                seen[line] = 1
 #        f.close()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
