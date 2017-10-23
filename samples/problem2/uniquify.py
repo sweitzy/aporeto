@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-#!/usr/local/bin/python3
-
 # problem2: see https://github.com/aporeto-inc/quiz
 
 '''
@@ -23,17 +21,19 @@ import sys
 import getopt
 
 def usage():
-    print("USAGE")
-
-# TODO: this is not very Pythonic!
-def do_verbose( verbose, msg ):
-    if verbose:
-        print(msg)
+    print("uniquify [--help|-h]")
+    print("uniquify --input=<filename> --output=<output-filename> [—verbose]")
 
 def main():
 
-    # process command-line args
-    print(sys.argv)
+    verbose = False
+    input = None
+    output = None
+
+    def do_verbose(msg):
+        nonlocal verbose
+        if verbose:
+            print(msg)
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'h', ['input=', 'output=', 'help', 'verbose'])
@@ -43,25 +43,22 @@ def main():
         usage()
         sys.exit(2)
 
-    verbose = False
-    input = None
-    output = None
-
     # TODO: try argparse instead
 
     for o, a in opts:
+        # TODO: -verbose vs --verbose?
         if o == "--verbose":
             verbose = True
-            do_verbose(verbose, 'Turn on verbose.')
+            do_verbose('Turn on verbose.')
         elif o in ("-h", "--help"):
             usage()
             sys.exit()
         elif o == "--input":
             input = a 
-            do_verbose(verbose, 'Input ' + a)
+            do_verbose('Input ' + a)
         elif o == "--output":
             output = a 
-            do_verbose(verbose, 'Output ' + a)
+            do_verbose('Output ' + a)
         else:
             assert False, "unhandled option"
 
@@ -87,6 +84,9 @@ def main():
                     seen[line] = 1
     except OSError as err:
         print("OS error: {0}".format(err))        
+
+# I think the above code is clearer (wrapping try around with), instead
+# of the code below (make try very very specific around only open).
 
 #    try:
 #        f = open(input);
