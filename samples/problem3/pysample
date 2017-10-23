@@ -7,17 +7,13 @@
 
 You will need to implement a program in go as described below:
 
-```bash
 gosample [-help|-h]
 gosample -urls=<comma-seperated-one-or-more-urls>
-```
 
 This binary should be able to read multiple urls and generate a word (a word only contains letters A-Za-z0-9) frequency table. Output can be stored in files with names url1.txt, url2.txt … in the following format:
-```bash
   url: <url>
     word1: count
     word2: count
-```
 
 Example:
 
@@ -33,7 +29,6 @@ import getopt
 import requests
 import re
 
-# TODO: don't hard code exit code values
 def usage(exit_code=2):
     print('pysample [-help|-h]')
     print('pysample -urls=<comma-seperated-one-or-more-urls>')
@@ -71,18 +66,30 @@ def main():
     # TODO: for some reason, https://www.aporeto.com returns 403, but curl works!
     url_counter = 1
     for url in urls.split(','):
-        print(url_counter, url)
-        # If we want to be REALLY efficient, use stream=True on request.
+
+        # NOTE: If we want to be REALLY efficient, use stream=True on request.
         resp = requests.get(url)
         if resp.status_code != requests.codes.ok:
-            raise NameError("Did not get ok response code")
-
-        # If we want to be REALLY efficient, use resp.iter_lines() not resp.text.
+            raise NameError('Did not get ok response code')
 
         # Process the response using iterator for efficiency.
-        # TODO: A-Za-z0-9?
-        for word in re.finditer(r'(\w+)', resp.text):
-            print(word.group(0))
+        # NOTE: use \w to get more realistic value for words,
+        # instead of [a-zA-Z0-9]
+        # NOTE: If we want to be REALLY efficient, use resp.iter_lines() not resp.text.
+
+        seen = dict()
+        for match in re.finditer(r'\w+', resp.text):
+            word = match.group(0)
+            if not word in seen:
+                seen[word] = 1
+            else:
+                seen[word] += 1
+
+        with open('url' + str(url_counter) + '.txt', 'w') as f:
+            f.write('url: {}\n'.format(url))
+            for k, v in seen.items():
+                f.write('    {}: {}\n'.format(k, v))
+
         url_counter += 1
 
 if __name__ == '__main__':
