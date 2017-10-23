@@ -34,6 +34,30 @@ def usage(exit_code=2):
     print('pysample --urls=<comma-seperated-one-or-more-urls>')
     sys.exit(exit_code)
 
+def process_url(url, url_num):
+    # NOTE: If we want to be REALLY efficient, use stream=True on request.
+    resp = requests.get(url)
+    if resp.status_code != requests.codes.ok:
+        raise NameError('Did not get ok response code')
+
+    # Process the response using iterator for efficiency.
+    # NOTE: use \w to get more realistic value for words,
+    # instead of [a-zA-Z0-9]
+    # NOTE: If we want to be REALLY efficient, use resp.iter_lines() not resp.text.
+    
+    seen = dict()
+    for match in re.finditer(r'\w+', resp.text):
+        word = match.group(0)
+        if not word in seen:
+            seen[word] = 1
+        else:
+            seen[word] += 1
+
+    with open('url' + str(url_num) + '.txt', 'w') as f:
+        f.write('url: {}\n'.format(url))
+        for k, v in seen.items():
+            f.write('    {}: {}\n'.format(k, v))
+
 def main():
 
     try:
@@ -68,29 +92,7 @@ def main():
     url_counter = 1
     for url in urls.split(','):
 
-        # NOTE: If we want to be REALLY efficient, use stream=True on request.
-        resp = requests.get(url)
-        if resp.status_code != requests.codes.ok:
-            raise NameError('Did not get ok response code')
-
-        # Process the response using iterator for efficiency.
-        # NOTE: use \w to get more realistic value for words,
-        # instead of [a-zA-Z0-9]
-        # NOTE: If we want to be REALLY efficient, use resp.iter_lines() not resp.text.
-
-        seen = dict()
-        for match in re.finditer(r'\w+', resp.text):
-            word = match.group(0)
-            if not word in seen:
-                seen[word] = 1
-            else:
-                seen[word] += 1
-
-        with open('url' + str(url_counter) + '.txt', 'w') as f:
-            f.write('url: {}\n'.format(url))
-            for k, v in seen.items():
-                f.write('    {}: {}\n'.format(k, v))
-
+        process_url(url, url_counter)
         url_counter += 1
 
 if __name__ == '__main__':
