@@ -30,13 +30,14 @@ import requests
 import re
 
 def usage(exit_code=2):
-    print('pysample [-help|-h]')
-    print('pysample -urls=<comma-seperated-one-or-more-urls>')
+    print('pysample [--help|-h]')
+    print('pysample --urls=<comma-seperated-one-or-more-urls>')
     sys.exit(exit_code)
 
 def main():
 
     try:
+        # NOTE: have to use --help/--urls, not -help/-urls.
         opts, args = getopt.getopt(sys.argv[1:], 'h', ['urls=', 'help'])
     except getopt.GetoptError as err:
         # print help information and exit:
