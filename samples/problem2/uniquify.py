@@ -45,6 +45,7 @@ def main():
 
     # TODO: try argparse instead
 
+    # Note: Python does not have switch/case.
     for o, a in opts:
         # TODO: -verbose vs --verbose?
         if o == '--verbose':
